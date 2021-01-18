@@ -14,12 +14,14 @@
                   "/var/runtime/node_modules:"                   \
                   "/var/runtime:"                                \
                   "/var/task"
+#define NODE_OPTIONS "--experimental-loader=/opt/esm-loader-hook.mjs"
 #define MIN_MEM_SIZE 128
 #define ARG_BUF_SIZE 32
 
 int main(void) {
   setenv("AWS_EXECUTION_ENV", AWS_EXECUTION_ENV, true);
   setenv("NODE_PATH", NODE_PATH, true);
+  setenv("NODE_OPTIONS", NODE_OPTIONS, true);
 
   const char *mem_size_str = getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE");
   int mem_size = mem_size_str != NULL ? atoi(mem_size_str) : MIN_MEM_SIZE;
@@ -32,7 +34,6 @@ int main(void) {
 
   execv("/opt/bin/node", (char *[]){
                              "node",
-                             "--experimental-loader=/opt/esm-loader-hook.mjs",
                              "--expose-gc",
                              max_semi_space_size,
                              max_old_space_size,
