@@ -160,13 +160,13 @@ async function getHandler() {
   }
 
   return (event, context) => new Promise((resolve, reject) => {
+    context.succeed = resolve
+    context.fail = reject
+    context.done = (err, data) => err ? reject(err) : resolve(data)
+
     const callback = (err, data) => {
       context[CALLBACK_USED] = true
-      if(err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
+      context.done(err, data)
     }
 
     let result
