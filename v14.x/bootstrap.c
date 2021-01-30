@@ -21,7 +21,15 @@
 int main(void) {
   setenv("AWS_EXECUTION_ENV", AWS_EXECUTION_ENV, true);
   setenv("NODE_PATH", NODE_PATH, true);
-  setenv("NODE_OPTIONS", NODE_OPTIONS, true);
+  
+  const char *node_options = getenv("NODE_OPTIONS");
+  if (node_options != NULL) {
+    char custom_node_options[ARG_BUF_SIZE * 8];
+    snprintf(custom_node_options, ARG_BUF_SIZE * 8, "%s %s", NODE_OPTIONS, node_options);
+    setenv("NODE_OPTIONS", custom_node_options, true);
+  } else {
+    setenv("NODE_OPTIONS", NODE_OPTIONS, true);
+  }
 
   const char *mem_size_str = getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE");
   int mem_size = mem_size_str != NULL ? atoi(mem_size_str) : MIN_MEM_SIZE;
